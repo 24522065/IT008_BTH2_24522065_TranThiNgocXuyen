@@ -1,0 +1,159 @@
+using System;
+using System.Text;
+namespace _3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+            int m, n;
+            while (true)
+            {
+                Console.Write("Nhập số hàng của ma trận: ");
+                if (int.TryParse(Console.ReadLine(), out m) && m > 0)
+                    break;
+                else
+                    Console.WriteLine("Vui lòng nhập số nguyên dương hợp lệ cho số hàng!");
+            }
+            while (true)
+            {
+                Console.Write("Nhập số cột của ma trận: ");
+                if (int.TryParse(Console.ReadLine(), out n) && n > 0)
+                    break;
+                else
+                    Console.WriteLine("Vui lòng nhập số nguyên dương hợp lệ cho số cột!");
+            }
+
+            int[,] matrix = new int[m, n];
+            choose(m, n, matrix);
+
+        }
+        static void matrixImport(int a, int b, int[,] matrix)
+        {
+            Random random = new Random();
+            for (int i = 0; i < a; i++)
+                for (int j = 0; j < b; j++)
+                    matrix[i, j] = random.Next(10, 100);
+        }
+
+        static void matrixEmport(int a, int b, int[,] matrix)
+        {
+            Console.WriteLine("\nMa trận hiện tại: ");
+            for(int i=0; i<a; i++)
+            {
+                for (int j = 0; j < b; j++)
+                    Console.Write(matrix[i, j].ToString("00") + " ");
+                Console.WriteLine();
+            }
+
+        }
+
+        static void findKey(int a, int b, int[,] matrix)
+        {
+            Console.Write("Hàng: ");
+            int x=int.Parse(Console.ReadLine());
+            Console.WriteLine("Cột: ");
+            int y=int.Parse(Console.ReadLine());
+
+            if(x<0 || x >= a || y < 0 || y >= b)
+            {
+                Console.WriteLine($"Không tồn tại phần tử tại tọa độ ({x},{y})");
+
+            }
+            else
+            {
+                Console.WriteLine($"Phần tử tại tọa độ ({x},{y}) là: {matrix[x,y]}");
+            }
+        }
+
+        static bool isPrime(int x)
+        {
+            if (x < 2) return false;
+            for (int i = 2; i <= Math.Sqrt(x); i++)
+                if (x % i == 0) return false;
+            return true;
+        }
+
+        static void primeExport(int a, int b, int[,] matrix)
+        {
+            Console.WriteLine("\n Các số nguyên tố trong ma trận là: ");
+            bool found = false;
+            for(int i=0; i<a; i++)
+                for(int j=0; j<b; j++)
+                    if (isPrime(matrix[i, j]))
+                    {
+                        Console.Write(matrix[i, j] + " ");
+                        found = true;
+                    }
+            if (!found)
+                Console.WriteLine("Không có số nguyên tố nào trong ma trận.");
+        }
+
+        static int maxPrimeRow(int a, int b, int[,] matrix)
+        {
+            int maxRow = 0, maxCount = 0;
+            for(int i=0;i<a; i++)
+            {
+                int count = 0;
+                for (int j = 0; j < b; j++)
+                    if (isPrime(matrix[i, j]))
+                        count++;
+                if (count > maxCount)
+                {
+                    maxCount = count;
+                    maxRow = i;
+                }
+            }
+            return maxRow;
+        }
+
+        static void Menu()
+        {
+            Console.WriteLine("---------------------------------------------");
+            Console.WriteLine("1.Tạo ma trận ngẫu nhiên");
+            Console.WriteLine("2.Tìm phần tử tại vị trí (x,y)");
+            Console.WriteLine("3.Xuất các phần tử là số nguyên tố");
+            Console.WriteLine("4.Dòng có nhiều số nguyên tố nhất");
+            Console.WriteLine("5.Thoát");
+            Console.WriteLine("---------------------------------------------");
+
+        }
+
+        static void choose(int a, int b, int[,] matrix)
+        {
+            int choice;
+            do
+            {
+                Menu();
+                Console.WriteLine("Nhập lựa chọn của bạn: ");
+                choice = int.Parse(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        matrixImport(a, b, matrix);
+                        matrixEmport(a, b, matrix);
+                        break;
+                    case 2:
+                        findKey(a, b, matrix);
+                        break;
+                    case 3:
+                        primeExport(a, b, matrix);
+                        break;
+                    case 4:
+                        int row = maxPrimeRow(a, b, matrix);
+                        Console.WriteLine($"Dòng {row + 1} có nhiều số nguyên tố nhất.");
+                        break;
+                    case 5:
+                        Console.WriteLine("Kết thúc chương trình.");
+                        break;
+                    default:
+                        Console.WriteLine("Lựa chọn không hợp lệ. Vui lòng nhập lại!");
+                        break;
+                }
+            }
+            while (choice != 5);
+        }
+
+    }
+}
