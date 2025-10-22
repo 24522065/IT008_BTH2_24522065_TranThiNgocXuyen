@@ -1,0 +1,137 @@
+using System;
+using System.Text;
+namespace _4
+{
+    class PhanSo : IComparable<PhanSo>
+    {
+        private int tu;
+        private int mau;
+
+        public PhanSo() { tu = 0; mau = 1; }
+
+        public void Nhap()
+        {
+            tu = NhapSoNguyen("Nhập tử số: ");
+            mau = NhapSoNguyen("Nhập mẫu số (khác 0): ");
+            while (mau == 0)
+            {
+                Console.WriteLine("Mẫu số phải khác 0!");
+                mau = NhapSoNguyen("Nhập lại mẫu số: ");
+            }
+
+            if (mau < 0)
+            {
+                tu = -tu;
+                mau = -mau;
+            }
+            RutGon();
+        }
+
+        private int NhapSoNguyen(string noti)
+        {
+            int so;
+            Console.Write(noti);
+            while (!int.TryParse(Console.ReadLine(), out so))
+            {
+                Console.WriteLine("Sai định dạng! Vui lòng nhập lại!");
+            }
+            return so;
+        }
+
+        public void Xuat()
+        {
+            RutGon();
+            if (mau == 1)
+                Console.WriteLine(tu);
+            else
+                Console.WriteLine($"{tu}/{mau}");
+        }
+
+        private void RutGon()
+        {
+            int ucln = UCLN(Math.Abs(tu), Math.Abs(mau));
+            tu /= ucln;
+            mau /= ucln;
+        }
+
+        private int UCLN(int a, int b)
+        {
+            while (b != 0)
+            {
+                int r = a % b;
+                a = b;
+                b = r;
+            }
+            return a;
+        }
+
+        public static PhanSo operator +(PhanSo a, PhanSo b)
+            => new PhanSo { tu = a.tu * b.mau + b.tu * a.mau, mau = a.mau * b.mau };
+        public static PhanSo operator -(PhanSo a, PhanSo b)
+            => new PhanSo { tu = a.tu * b.mau - b.tu * a.mau, mau = a.mau * b.mau };
+        public static PhanSo operator *(PhanSo a, PhanSo b)
+            => new PhanSo { tu = a.tu * b.tu, mau = a.mau * b.mau };
+        public static PhanSo operator /(PhanSo a, PhanSo b)
+            => new PhanSo { tu = a.tu * b.mau, mau = a.mau * b.tu };
+
+        public int CompareTo(PhanSo other)
+        {
+            double val1 = (double)tu / mau;
+            double val2 = (double)other.tu / other.mau;
+            return val1.CompareTo(val2);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+
+            Console.WriteLine("Nhập phân số thứ nhất");
+            PhanSo a = new PhanSo();
+            a.Nhap();
+
+            Console.WriteLine("Nhập phân số thứ hai");
+            PhanSo b = new PhanSo();
+            b.Nhap();
+
+            Console.WriteLine("\n Kết quả: ");
+            Console.WriteLine("Tổng: "); (a + b).Xuat();
+            Console.WriteLine("Hiệu: "); (a - b).Xuat();
+            Console.WriteLine("Tích: "); (a * b).Xuat();
+            Console.WriteLine("Thương "); (a / b).Xuat();
+
+            Console.WriteLine("\n Nhập số lượng phân số trong dãy: ");
+            int n;
+            while (!int.TryParse(Console.ReadLine(), out n) || n <= 0)
+            {
+                Console.WriteLine("Sai định dạng. Nhâp số nguyên dương: ");
+            }
+
+            List<PhanSo> ds = new List<PhanSo>();
+            for (int i = 0; i < n; i++)
+            {
+                Console.WriteLine($"\n Phân số thứ {i + 1}: ");
+                PhanSo ps = new PhanSo();
+                ps.Nhap();
+                ds.Add(ps);
+            }
+
+            PhanSo max = ds[0];
+            foreach (var ps in ds)
+            {
+                if (ps.CompareTo(max) > 0)
+                    max = ps;
+            }
+            Console.WriteLine("Phân số lớn nhất: ");
+            max.Xuat();
+
+            ds.Sort();
+            Console.WriteLine("Dãy phân số sau khi sắp xếp tăng dần: ");
+            foreach (var ps in ds)
+                ps.Xuat();
+            Console.ReadKey();
+        }
+    }
+}
