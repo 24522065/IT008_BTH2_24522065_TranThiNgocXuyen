@@ -1,0 +1,54 @@
+using System;
+using System.Text;
+namespace _02
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+            Console.InputEncoding=Encoding.Unicode;
+            Console.Write("Nhập đường dẫn thư mục: ");
+            string path= Console.ReadLine();
+
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Đường dẫn không tồn tại!");
+                return;
+            }
+
+            DirectoryInfo dir = new DirectoryInfo(path);
+            Console.WriteLine("\nDirectory of {0}\n", path);
+
+            FileInfo[] files=dir.GetFiles();
+            DirectoryInfo[] subDirs= dir.GetDirectories();
+
+            long tongKichThuoc = 0;
+
+            foreach(DirectoryInfo d in subDirs)
+            {
+                Console.WriteLine("{0,10} {1,8} {2,-30}",
+                    d.LastWriteTime.ToString("dd//MM/yyyy hh:mm tt"),
+                    "<DIR>",
+                    d.Name);
+            }
+
+            foreach(FileInfo f in files)
+            {
+                Console.WriteLine("{0,10} {1,8} {2,-30}",
+                    f.LastWriteTime.ToString("dd//MM/yyyy hh:mm tt"),
+                    f.Length,
+                    f.Name );
+                tongKichThuoc += f.Length;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("   {0} File(s) {1} bytes", files.Length, tongKichThuoc);
+            Console.WriteLine("   {0} Dir(s) {1} bytes free",
+                subDirs.Length,
+                new DriveInfo(dir.Root.FullName).AvailableFreeSpace);
+
+            Console.ReadKey();
+        }
+    }
+}
